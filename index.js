@@ -4,7 +4,7 @@ const SiteFactoryClient2 = require('./lib/site-factory-client-2');
 const fs = require('fs');
 
 // TODO: This needs to come from the command-line.
-const TARGET_ENV = "test";
+const TARGET_ENV = "dev";
 
 const factoryConn = config.get('factoryConnection');
 
@@ -24,17 +24,28 @@ async function main() {
     try {
         const srcSitelist = await sourceClient.sites.list(); // List of ACSF sites
 
-        siteIds = srcSitelist.map((site) => site.id);
-        stageTask = await sourceClient2.stage.stage(TARGET_ENV, siteIds, true, true, false);
+        const siteIds = srcSitelist.map((site) => site.id);
+
+        // Stage to requested lower tier.
+        let stageTask = await sourceClient2.stage.stage(TARGET_ENV, siteIds, true, true, false);
+
+        // Wait for staging to complete.
+        await sourceClient.tasks.waitForCompletion(stageTask.task_id, showProgress);
 
         console.log(JSON.stringify(stageTask));
-        // Get the list of domains on the target.
-        // Stage prod with all of its sites.
-        // Monitor for the task to complete.
+        console.log(`Done staging to '${TARGET_ENV}' environment.`);
+
         // Re-assign domains to the target.
 
     } catch (err) {
         console.error(err);
+    }
+}
+
+function showProgress(isComplete) {
+    process.stdout.write('.');
+    if(isComplete){
+        process.stdout.write('\n');
     }
 }
 
