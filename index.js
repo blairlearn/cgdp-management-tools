@@ -1,9 +1,9 @@
-const config = require('config');
-const SiteFactoryClient = require('./lib/site-factory-client');
-const SiteFactoryClient2 = require('./lib/site-factory-client-2');
-const fs = require('fs');
-const DomainUtility = require('./lib/domain-utility');
-const { resolve } = require('path');
+const config                    = require('config');
+const asyncPool                 = require('tiny-async-pool');
+
+const SiteFactoryClient         = require('./lib/site-factory-client');
+const SiteFactoryClient2        = require('./lib/site-factory-client-2');
+const DomainUtility             = require('./lib/domain-utility');
 
 const factoryConn = config.get('factoryConnection');
 
@@ -55,6 +55,10 @@ async function main() {
 
         await doDomainAssignments(destClient, destDomainList);
 
+        // Clear the varnish and drupal caches
+        const clearCache = id => destClient.sites.clearCache(id);
+        await asyncPool(5, siteIds, clearCache);
+
         console.log(`Done staging to '${targetEnv}' environment.`);
 
     } catch (err) {
@@ -94,11 +98,8 @@ function getTargetEnvironment() {
  * @param {Int32Array} siteIDList An array of the sites.
  */
 async function getDomainList(sfClient, siteIDList) {
-    return Promise.all(
-        siteIDList.map(
-            async (id) => await sfClient.domains.get(id)
-        )
-    );
+    const getDomains = async siteID => sfClient.domains.get(siteID);
+    return asyncPool(5, siteIDList, getDomains);
 }
 
 /**
@@ -119,18 +120,16 @@ async function doDomainAssignments(sfClient, assignments) {
      *          ]
      *      }
      */
-    return Promise.all(assignments.map(async (domain) => {
-        await sfClient.domains.add(domain.siteID, domain.primary);
-        Promise.all(
-                domain.secondary.map(async (siteAlias) => {
-                    await sfClient.domains.add(domain.siteID, siteAlias);
+    const perSite = async siteInfo => {
+        // The primary domain _must_ be set before the secondaries.
+        await sfClient.domains.add(siteInfo.siteID, siteInfo.primary);
+        await Promise.all(
+            siteInfo.secondary.map(siteAlias => {
+                sfClient.domains.add(siteInfo.siteID, siteAlias);
             })
         );
-    }))
-
+    };
+    return asyncPool(5, assignments, perSite);
 }
-
-
-
 
 main();
