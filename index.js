@@ -4,6 +4,7 @@ const asyncPool                 = require('tiny-async-pool');
 const SiteFactoryClient         = require('./lib/site-factory-client');
 const SiteFactoryClient2        = require('./lib/site-factory-client-2');
 const DomainUtility             = require('./lib/domain-utility');
+const UserFilter                = require('./lib/user-filter');
 
 const factoryConn = config.get('factoryConnection');
 
@@ -49,7 +50,7 @@ async function main() {
 
         // Re-assign domains to the target.
 
-        // Get the domain information for each site
+        // Translate site domains from the source to match the target.
         const srcDomainList = await getDomainList(sourceClient, siteIds)
         const destDomainList = DomainUtility.GenerateDestinationDomains(srcDomainList, targetEnv);
 
@@ -58,6 +59,13 @@ async function main() {
         // Clear the varnish and drupal caches
         const clearCache = id => destClient.sites.clearCache(id);
         await asyncPool(5, siteIds, clearCache);
+
+
+        // // Set tier-specific permissions..
+        // let users = await destClient.users.list();
+        // users = UserFilter(users, config.roles.promote, config.roles.remove);
+        // const assign = async user => destClient.users.setRoles(user.uid, config.roles.desired);
+        // await asyncPool(5, users, assign);
 
         console.log(`Done staging to '${targetEnv}' environment.`);
 
