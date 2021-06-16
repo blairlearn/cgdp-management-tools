@@ -1,0 +1,25 @@
+{
+    "githubConnection": {
+        "orgname": "nobody",
+        "apikey": "12345"
+    },
+    "branches": {
+        "master": "general",
+        "main": "general",
+        "develop": "general",
+        "feature/*": "general",
+        "hotfix/*": "general",
+        "release/*": "general"
+    },
+    "rules" : {
+        "general": {
+            "requiresApprovingReviews": true, // Require pull request reviews before merging.
+            "requiredApprovingReviewCount": 1, // At least one review.
+            "requiresStatusChecks": true, // Status checks must pass.
+            "requiresStrictStatusChecks": true, // Branches must be up to date before merging.
+            "isAdminEnforced": false, // Don't enforce the above rules for admins.
+            "restrictsPushes": true, // Restrict who can push to matching branches.
+            "allowsDeletions": true // Allow deletions.
+        }
+    }
+}

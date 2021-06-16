@@ -1,0 +1,17 @@
+{
+  "name": "branch-protection",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Blair Learn (https://github.com/blairlearn)",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/graphql": "^4.6.0",
+    "config": "^3.3.3"
+  },
+  "devDependencies": {}
+}
