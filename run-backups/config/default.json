@@ -1,0 +1,13 @@
+{
+  "factoryConnection": {
+    "username": "nobody",
+    "apikey": "11111111",
+    "factoryHost": "www.site.acsitefactory.com"
+  },
+  "mail": {
+    "server": "none",
+    "port": -1,
+    "sender": "nobody",
+    "recipients": "nobody"
+  }
+}
