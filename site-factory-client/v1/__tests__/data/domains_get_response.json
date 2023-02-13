@@ -1,0 +1,9 @@
+{
+  "node_id": 999,
+  "node_type": "site",
+  "time": "2019-07-10T13:02:42+00:00",
+  "domains": {
+    "protected_domains": ["mysite.sitename.acsitefactory.com"],
+    "custom_domains": ["domain1.cancer.gov", "domain2.cancer.gov"]
+  }
+}

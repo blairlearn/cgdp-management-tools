@@ -1,0 +1,36 @@
+{
+  "count": "4",
+  "sites": [{
+    "id": 991,
+    "site": "site1",
+    "stack_id": 1,
+    "domain": "site1.sitename.acsitefactory.com",
+    "groups": [116],
+    "site_collection": false,
+    "is_primary": true
+  }, {
+    "id": 992,
+    "site": "site2",
+    "stack_id": 1,
+    "domain": "site2.sitename.acsitefactory.com",
+    "groups": [116],
+    "site_collection": false,
+    "is_primary": true
+  }, {
+    "id": 993,
+    "site": "site3",
+    "stack_id": 1,
+    "domain": "site3.sitename.acsitefactory.com",
+    "groups": [116],
+    "site_collection": false,
+    "is_primary": true
+  }, {
+    "id": 994,
+    "site": "site4",
+    "stack_id": 1,
+    "domain": "site4.sitename.acsitefactory.com",
+    "groups": [116],
+    "site_collection": false,
+    "is_primary": true
+  }]
+}
